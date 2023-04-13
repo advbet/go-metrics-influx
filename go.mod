@@ -1,6 +1,6 @@
 module github.com/advbet/go-metrics-influx/v3
 
-go 1.17
+go 1.20
 
 require (
 	github.com/influxdata/influxdb-client-go/v2 v2.6.0
