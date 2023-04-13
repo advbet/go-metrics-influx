@@ -35,7 +35,7 @@ import (
 	"sync"
 	"time"
 
-	influx "github.com/advbet/go-metrics-influx/v2"
+	influx "github.com/advbet/go-metrics-influx/v3"
 	metrics "github.com/rcrowley/go-metrics"
 	"github.com/sirupsen/logrus"
 )

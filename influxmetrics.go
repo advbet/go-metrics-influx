@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -168,10 +167,10 @@ func (r *Reporter) report(rapi api.WriteAPI, tstamp time.Time) {
 		}
 
 		measurement := name
-		if parts := strings.Split(name, ","); len(parts) > 1 {
+		if parts := SplitWithEscaping(name, ','); len(parts) > 1 {
 			measurement = parts[0]
 			for i := 1; i < len(parts); i++ {
-				kv := strings.Split(parts[i], "=")
+				kv := SplitWithEscaping(parts[i], '=')
 				if len(kv) == 2 {
 					tags[kv[0]] = kv[1]
 					continue
@@ -288,4 +287,27 @@ func (r *Reporter) report(rapi api.WriteAPI, tstamp time.Time) {
 	})
 
 	rapi.Flush()
+}
+
+// SplitWithEscaping escapes splitting characters suffixed with '/'.
+func SplitWithEscaping(s string, separator byte) []string {
+	var token []byte
+
+	var tokens []string
+
+	for i := 0; i < len(s); i++ {
+		if s[i] == separator {
+			tokens = append(tokens, string(token))
+			token = token[:0]
+		} else if s[i] == '/' && i+1 < len(s) && s[i+1] == separator {
+			i++
+			token = append(token, s[i])
+		} else {
+			token = append(token, s[i])
+		}
+	}
+
+	tokens = append(tokens, string(token))
+
+	return tokens
 }

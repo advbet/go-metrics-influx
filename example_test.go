@@ -5,14 +5,14 @@ import (
 	"sync"
 	"time"
 
-	influx "github.com/advbet/go-metrics-influx/v2"
+	influx "github.com/advbet/go-metrics-influx/v3"
 	metrics "github.com/rcrowley/go-metrics"
 	"github.com/sirupsen/logrus"
 )
 
 func worker() {
 	c := metrics.NewCounter()
-	if err := metrics.Register("foo", c); err != nil {
+	if err := metrics.Register("foo", c); err != nil { //nolint:staticcheck
 		// Handle err.
 	}
 
