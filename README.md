@@ -32,12 +32,12 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"sync"
 	"time"
 
 	influx "github.com/advbet/go-metrics-influx/v2"
 	metrics "github.com/rcrowley/go-metrics"
-	"github.com/sirupsen/logrus"
 )
 
 func worker() {
