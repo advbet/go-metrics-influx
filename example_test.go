@@ -12,7 +12,7 @@ import (
 
 func worker() {
 	c := metrics.NewCounter()
-	if err := metrics.Register("foo", c); err != nil {
+	if err := metrics.Register("foo", c); err != nil { //nolint // all good.
 		// Handle err.
 	}
 
