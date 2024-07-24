@@ -67,7 +67,7 @@ func Example() {
 			"org",                   // org name
 			"bucket",                // bucket name
 			influx.Tags(map[string]string{"instance": "app@localhost"}),
-			influx.Logger(logrus.WithField("thread", "go-metrics-influx")),
+			influx.Logger(slog.With("thread", "go-metrics-influx")),
 		).Run(ctx)
 	}()
 

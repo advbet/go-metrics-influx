@@ -4,8 +4,9 @@ package influx
 import (
 	"context"
 	"fmt"
-	"io"
+	"log/slog"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -15,13 +16,12 @@ import (
 	"github.com/influxdata/influxdb-client-go/v2/api/write"
 	"github.com/influxdata/influxdb-client-go/v2/log"
 	metrics "github.com/rcrowley/go-metrics"
-	"github.com/sirupsen/logrus"
 )
 
 // Reporter holds configuration of go-metrics influx exporter.
 // It should only be created using New function.
 type Reporter struct {
-	log                     logrus.FieldLogger
+	log                     *slog.Logger
 	registry                metrics.Registry
 	url, token, org, bucket string
 	interval                time.Duration
@@ -34,8 +34,8 @@ type Reporter struct {
 // Option allows to configure optional reporter parameters.
 type Option func(*Reporter)
 
-// Logger sets custom logrus logger for error reporting.
-func Logger(log logrus.FieldLogger) Option {
+// Logger sets custom slog logger for error reporting.
+func Logger(log *slog.Logger) Option {
 	return func(r *Reporter) {
 		r.log = log
 	}
@@ -88,12 +88,7 @@ func New(
 ) *Reporter {
 
 	r := &Reporter{
-		log: &logrus.Logger{
-			Out:       io.Discard,
-			Formatter: new(logrus.TextFormatter),
-			Hooks:     make(logrus.LevelHooks),
-			Level:     logrus.PanicLevel,
-		},
+		log:         slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{})),
 		url:         url,
 		token:       token,
 		org:         org,
@@ -137,7 +132,7 @@ func (r *Reporter) Run(ctx context.Context) {
 	go func() {
 		defer wg.Done()
 		for err := range errCh {
-			r.log.WithField("error", err).
+			r.log.With("error", err).
 				Error("writing metrics batch to influx database")
 		}
 	}()
