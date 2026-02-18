@@ -86,7 +86,6 @@ func New(
 	bucket string,
 	opts ...Option,
 ) *Reporter {
-
 	r := &Reporter{
 		log: &logrus.Logger{
 			Out:       io.Discard,
@@ -148,6 +147,7 @@ func (r *Reporter) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
+			r.report(rapi, time.Now())
 			client.Close()
 			wg.Wait()
 			return
